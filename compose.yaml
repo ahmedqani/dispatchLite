@@ -19,5 +19,38 @@ services:
       retries: 12
       start_period: 10s
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: dispatchlite-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: dispatchlite
+      PGUSER: dispatchlite
+      PGPASSWORD: dispatchlite
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        VITE_API_BASE_URL: http://localhost:3001
+    container_name: dispatchlite-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
 volumes:
   dispatchlite_pgdata:
