@@ -1,0 +1,18 @@
+{
+  "name": "dispatchlite",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "start:db": "docker compose up -d db",
+    "stop:db": "docker compose stop db",
+    "reset:db": "docker compose down -v && docker compose up -d db",
+    "start": "npm run start:db && concurrently -n api,web \"npm --workspace apps/api run dev\" \"npm --workspace apps/web run dev\"",
+    "test": "npm --workspace apps/api test && npm --workspace apps/web test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
